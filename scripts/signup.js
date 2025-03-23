@@ -63,32 +63,23 @@ function signup(){
 
   let newUser=new User(name,email,password);
 
-  storeHashPW(newUser,password);
-
-  console.log('Stored PW : '+newUser.password);
-
-  sessionStorage.setItem('signup-notification',`<span class="in-progress">In Process...</span>`);
-  loadSignUpNotification();
+  console.log('calling storeHashPW()');
   
-  let setIntervalForHashingPW_ID=setInterval(()=>{
-    console.log('inside setInterval');
+  sessionStorage.setItem('signup-notification',`<span class="in-progress">In Progress...</span>`);
+  loadSignUpNotification();
 
-    let successfulSignup=localStorage.getItem(email);
-    if(successfulSignup){
-      clearInterval(setIntervalForHashingPW_ID);
-      signupSuccessful();
-    }
-    
-  },1000);
+  storeHashPW(newUser,password,signupSuccessful);
+
 }
 
-function signupSuccessful(){
+function signupSuccessful(email){
   
-  sessionStorage.setItem('signup-notification',`<span class="successful"> Sign Up Successfull...redirecting in 2 sec</span>`);
+  sessionStorage.setItem('signup-notification',`<span class="successfull"> Sign Up Successfull...redirecting in 2 sec</span>`);
   loadSignUpNotification();
 
   setTimeout(()=>{
-    console.log('going to tasks.html');
+    localStorage.setItem('logged-in-user',email);
+    sessionStorage.removeItem('signup-notification');
     window.location.href="app/tasks.html";
   },2000);
 }

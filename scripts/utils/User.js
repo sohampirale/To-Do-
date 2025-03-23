@@ -13,19 +13,26 @@ async function hashSHA256Sync(text) {
   return hashHex;
 }
 
-export async function storeHashPW(user,password){
+export async function storeHashPW(user,password,successfulSignup){
+  console.log('inside storeHashPW()');
+  
   hashSHA256Sync(password).then((hashedhPW)=>{
+    console.log('hashing completed');
     user.password=hashedhPW;
     localStorage.setItem(user.email,JSON.stringify(user));
+    successfulSignup(user.email);
   });
 }
 
-export async function convertToHashAndLogin(user,password){
+export async function convertToHashAndLogin(user,password,successfulLogin,unsuccessfullLogin){
+  console.log('inside convertToHashAndLogin()');
+  
   hashSHA256Sync(password).then((hashedPW)=>{
+    console.log('hashing complete');
     if(hashedPW===user.password){
-      sessionStorage.setItem('login-status','successfull');
+      successfulLogin(user.email);
     } else {
-      sessionStorage.setItem('login-status','unsuccessfull');
+      unsuccessfullLogin();
     }
   })
 }
@@ -34,6 +41,11 @@ export class User{
   name;
   email;
   password;
+  taskId=1;
+  // completedTaskId;
+  tasks={};
+  completedTasks={};
+  
   constructor(name,email,password){
     this.name=name;
     this.email=email;
